@@ -69,8 +69,6 @@ public class GameManager : MonoBehaviour
             //TODO: preparar el juego para el Game Over
             MenuManager.sharedInstance.ShowMainMenu();
         }
-
-
         this.currentGameState = newGameSate;
     }
 }

@@ -7,15 +7,20 @@ public class BoardManager : MonoBehaviour
     public static BoardManager sharedInstance;
     public List<Sprite> prefabs = new List<Sprite>();
     public GameObject currentPlanet;
-    public int xSize, ySize;   
+    public int xSize, ySize;       
 
     private GameObject[,] planets;
 
     public bool isShifting { get; set; }
 
     private Planet selectedPlanet;
-
     public const int MinPlanetsToMatch = 2;
+
+    //Audio
+    public AudioClip matchSound;
+    private AudioSource AudioBoardManager;
+
+    
     
     void Start()
     {   
@@ -29,7 +34,9 @@ public class BoardManager : MonoBehaviour
             Destroy(gameObject);
         }      
             Vector2 offset = currentPlanet.GetComponent<BoxCollider2D>().size;
-            CreateInicialBoard(offset);       
+            CreateInicialBoard(offset);  
+            //Audio
+            AudioBoardManager = GetComponent<AudioSource>();            
     }
 
     private void CreateInicialBoard(Vector2 offset)
@@ -121,6 +128,8 @@ public class BoardManager : MonoBehaviour
             {
                 renderers[j].sprite = renderers[j + 1].sprite;
                 renderers[j + 1].sprite = GetNewPlanets(x,ySize-1);
+                //SFX al caer nuevos planetas
+                AudioBoardManager.PlayOneShot(matchSound, 0.6f);
             }
         }
 
@@ -148,5 +157,4 @@ public class BoardManager : MonoBehaviour
         }
         return possiblePlanets[Random.Range(0, possiblePlanets.Count)];
     }
-
 }

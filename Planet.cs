@@ -175,7 +175,7 @@ public class Planet : MonoBehaviour
         {
             foreach (GameObject planet in matchingPlanets)
             {
-                planet.GetComponent<SpriteRenderer>().sprite = null; 
+                planet.GetComponent<SpriteRenderer>().sprite = null;                        
             }
             return true;
         }

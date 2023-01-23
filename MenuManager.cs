@@ -8,7 +8,7 @@ public class MenuManager : MonoBehaviour
     public Canvas MenuCanvas;
 
     public void Awake()
-    {
+    {           
         if (sharedInstance == null)
         {
             sharedInstance = this;
