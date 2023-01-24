@@ -18,9 +18,7 @@ public class BoardManager : MonoBehaviour
 
     //Audio
     public AudioClip matchSound;
-    private AudioSource AudioBoardManager;
-
-    
+    private AudioSource AudioBoardManager;    
     
     void Start()
     {   
@@ -34,8 +32,7 @@ public class BoardManager : MonoBehaviour
             Destroy(gameObject);
         }      
             Vector2 offset = currentPlanet.GetComponent<BoxCollider2D>().size;
-            CreateInicialBoard(offset);  
-            //Audio
+            CreateInicialBoard(offset);              
             AudioBoardManager = GetComponent<AudioSource>();            
     }
 
@@ -129,7 +126,7 @@ public class BoardManager : MonoBehaviour
                 renderers[j].sprite = renderers[j + 1].sprite;
                 renderers[j + 1].sprite = GetNewPlanets(x,ySize-1);
                 //SFX al caer nuevos planetas
-                AudioBoardManager.PlayOneShot(matchSound, 0.6f);
+                AudioBoardManager.PlayOneShot(matchSound, 0.3f);
             }
         }
 

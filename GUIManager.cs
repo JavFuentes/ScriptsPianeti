@@ -43,7 +43,6 @@ public class GUIManager : MonoBehaviour
             {
                 moveCounter = 0;
                 StartCoroutine(GameOver());
-
             }
         }
     }
