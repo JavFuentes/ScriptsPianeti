@@ -124,7 +124,7 @@ public class BoardManager : MonoBehaviour
             for (int j = 0; j < renderers.Count - 1;j++)
             {
                 renderers[j].sprite = renderers[j + 1].sprite;
-                renderers[j + 1].sprite = GetNewPlanets(x,ySize-1);
+                renderers[j + 1].sprite = GetNewPlanets(x, ySize - 1);
                 //SFX al caer nuevos planetas
                 AudioBoardManager.PlayOneShot(matchSound, 0.3f);
             }

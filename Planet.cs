@@ -173,16 +173,17 @@ public class Planet : MonoBehaviour
 
         if (matchingPlanets.Count >= BoardManager.MinPlanetsToMatch)
         {     
-            //Si se hacen 4 en linea obtienes 10 puntos extra       
+            //Si se hacen 4 en linea obtienes 1 movimiento y 10 puntos extra       
             if(matchingPlanets.Count == 3)
             {
+                GUIManager.sharedInstance.MoveCounter += 1; 
                 GUIManager.sharedInstance.Score += 10;  
             }
 
-            //Si se hacen 5 en linea ganas 1 movimiento y 50 puntos extra
+            //Si se hacen 5 en linea ganas 3 movimientos y 50 puntos extra
             if(matchingPlanets.Count == 4)
             {
-                GUIManager.sharedInstance.MoveCounter += 1; 
+                GUIManager.sharedInstance.MoveCounter += 3; 
                 GUIManager.sharedInstance.Score += 50;   
             }
             

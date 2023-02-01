@@ -60,8 +60,9 @@ public class GUIManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        //El contador de puntaje se inicializa en 0 y el de movimientos en 5
         score = 0;
-        moveCounter = 10;
+        moveCounter = 5;
         movesText.text = "Moves : " + moveCounter;
         scoreText.text = "Score : " + score;
 
