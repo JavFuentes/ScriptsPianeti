@@ -114,12 +114,7 @@ public class BoardManager : MonoBehaviour
 
         List<SpriteRenderer> renderers = new List<SpriteRenderer>();
         int nullPlanets = 0;
-
-        // if(renderers.Count == 1)
-        // {
-        //     renderers[0].sprite = GetNewPlanet(x, ySize - 1);
-        // }
-
+      
         for (int y = yStart; y < ySize; y++)
         {
             SpriteRenderer spriteRenderer = planets[x, y].GetComponent<SpriteRenderer>();
