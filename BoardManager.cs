@@ -22,6 +22,9 @@ public class BoardManager : MonoBehaviour
     
     void Start()
     {   
+        //La pantalla no se atenuará
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         //El famoso singleton
         if (sharedInstance == null)
         {
@@ -79,7 +82,13 @@ public class BoardManager : MonoBehaviour
     public IEnumerator FindNullPlanets()
     {
         for (int x = 0; x < xSize; x++)
-        {
+        {   
+            // Verificar si la primera fila tiene planetas nulos
+            if (planets[x, 0].GetComponent<SpriteRenderer>().sprite == null)
+            {
+                yield return StartCoroutine(MakePlanetsFall(x, 0));
+            }
+
             for (int y=0; y < ySize; y++)
             {
                 if (planets[x, y].GetComponent<SpriteRenderer>().sprite == null)
@@ -106,9 +115,15 @@ public class BoardManager : MonoBehaviour
         List<SpriteRenderer> renderers = new List<SpriteRenderer>();
         int nullPlanets = 0;
 
+        // if(renderers.Count == 1)
+        // {
+        //     renderers[0].sprite = GetNewPlanet(x, ySize - 1);
+        // }
+
         for (int y = yStart; y < ySize; y++)
         {
             SpriteRenderer spriteRenderer = planets[x, y].GetComponent<SpriteRenderer>();
+            
             if (spriteRenderer.sprite == null)
             {
                 nullPlanets++;
@@ -116,24 +131,26 @@ public class BoardManager : MonoBehaviour
             renderers.Add(spriteRenderer);
         }
 
-        for (int i = 0; i < nullPlanets; i++)
-        {
-            GUIManager.sharedInstance.Score += 10; 
+       for (int i = 0; i < nullPlanets; i++)
+       {
+            GUIManager.sharedInstance.Score += 10;
 
             yield return new WaitForSeconds(shiftDelay);
-            for (int j = 0; j < renderers.Count - 1;j++)
+
+            for (int j = 0; j < renderers.Count - 1; j++)
             {
                 renderers[j].sprite = renderers[j + 1].sprite;
-                renderers[j + 1].sprite = GetNewPlanets(x, ySize - 1);
-                //SFX al caer nuevos planetas
-                AudioBoardManager.PlayOneShot(matchSound, 0.3f);
             }
+
+            renderers[renderers.Count - 1].sprite = GetNewPlanet(x, ySize - 1);
+
+            //SFX al caer nuevos planetas
+            AudioBoardManager.PlayOneShot(matchSound, 0.3f);
+}
+            isShifting = false;
         }
 
-        isShifting = false;
-    }
-
-    private Sprite GetNewPlanets(int x, int y)
+    private Sprite GetNewPlanet(int x, int y)
     {
         List<Sprite> possiblePlanets = new List<Sprite>();
         possiblePlanets.AddRange(prefabs);
@@ -152,6 +169,7 @@ public class BoardManager : MonoBehaviour
         {
             possiblePlanets.Remove(planets[x, y-1].GetComponent<SpriteRenderer>().sprite);
         }
+
         return possiblePlanets[Random.Range(0, possiblePlanets.Count)];
     }
 }

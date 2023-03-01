@@ -23,11 +23,6 @@ public class GameManager : MonoBehaviour
             sharedInstance = this;
         }
     }
-
-    void Start()
-    {
-        
-    }
     
     void Update()
     {
@@ -56,7 +51,7 @@ public class GameManager : MonoBehaviour
     private void SetGameState(GameState newGameSate)
     {
         if (newGameSate == GameState.menu)
-        {           
+        {          
             MenuManager.sharedInstance.ShowMainMenu();
         }
         else if (newGameSate == GameState.inGame)

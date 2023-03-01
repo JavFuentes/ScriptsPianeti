@@ -60,7 +60,7 @@ public class GUIManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //El contador de puntaje se inicializa en 0 y el de movimientos en 5
+        //El contador de puntaje se inicializa en 0 y el contador de movimientos en 5.
         score = 0;
         moveCounter = 5;
         movesText.text = "Moves : " + moveCounter;
@@ -74,6 +74,7 @@ public class GUIManager : MonoBehaviour
     {
         resultScore = score;
         previousMaxScore = PlayerPrefs.GetInt("maxScore", 0);
+        
         if (resultScore > previousMaxScore)
         {
             PlayerPrefs.SetInt("maxScore", resultScore);

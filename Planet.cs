@@ -220,6 +220,6 @@ public class Planet : MonoBehaviour
 
             StopCoroutine(BoardManager.sharedInstance.FindNullPlanets());
             StartCoroutine(BoardManager.sharedInstance.FindNullPlanets());
-        }
+        }        
     }
 }
