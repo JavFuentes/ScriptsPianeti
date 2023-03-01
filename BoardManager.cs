@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public static BoardManager sharedInstance;
+    public static BoardManager sharedInstance;  // Singleton
+
+    // Lista de Sprites para los planetas
     public List<Sprite> prefabs = new List<Sprite>();
+
+    // Planeta actual y tamaño del tablero
     public GameObject currentPlanet;
     public int xSize, ySize;       
 
+    // Array para almacenar los planetas
     private GameObject[,] planets;
 
+    // Propiedad que indica si se está desplazando un planeta   
     public bool isShifting { get; set; }
 
+    // Planeta seleccionado y número mínimo de planetas para hacer match
     private Planet selectedPlanet;
     public const int MinPlanetsToMatch = 2;
 
@@ -22,10 +29,10 @@ public class BoardManager : MonoBehaviour
     
     void Start()
     {   
-        //La pantalla no se atenuará
+        // Configuración para que la pantalla nunca se apague
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        //El famoso singleton
+        //  El famoso singleton
         if (sharedInstance == null)
         {
             sharedInstance = this;
@@ -34,11 +41,14 @@ public class BoardManager : MonoBehaviour
         {
             Destroy(gameObject);
         }      
+            // Crear el tablero inicial
             Vector2 offset = currentPlanet.GetComponent<BoxCollider2D>().size;
-            CreateInicialBoard(offset);              
+            CreateInicialBoard(offset);  
+            // Obtener el componente AudioSource para reproducir efectos de sonido            
             AudioBoardManager = GetComponent<AudioSource>();            
     }
 
+    // Método para crear el tablero inicial
     private void CreateInicialBoard(Vector2 offset)
     {
         planets = new GameObject[xSize, ySize];
@@ -68,17 +78,21 @@ public class BoardManager : MonoBehaviour
                 while ((x > 0 && idx == planets[x - 1, y].GetComponent<Planet>().id) ||
                     (y > 0 && idx == planets[x, y - 1].GetComponent<Planet>().id));
 
+                // Asignar el sprite y el id al planeta
                 Sprite sprite = prefabs[idx];
                 newPlanet.GetComponent<SpriteRenderer>().sprite = sprite;
                 newPlanet.GetComponent<Planet>().id = idx;
 
+                // Establecer el padre del planeta
                 newPlanet.transform.parent = this.transform;
 
+                // Almacenar el planeta en el array
                 planets[x, y] = newPlanet;                 
             }
         }
     }
 
+    // Corutina para buscar planetas nulos
     public IEnumerator FindNullPlanets()
     {
         for (int x = 0; x < xSize; x++)
