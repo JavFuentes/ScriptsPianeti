@@ -34,8 +34,10 @@ public class FirebaseManager : MonoBehaviour
     private void AddData()
     {
       FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+      Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
 
-      DocumentReference docRef = db.Collection("users").Document("alovelace");
+      DocumentReference docRef = db.Collection("users").Document(auth.CurrentUser.UserId);
+
       Dictionary<string, object> user = new Dictionary<string, object>
       {
         { "First", "Ada" },
@@ -44,7 +46,35 @@ public class FirebaseManager : MonoBehaviour
       };
       docRef.SetAsync(user).ContinueWithOnMainThread(task => {
         Debug.Log("Added data to the alovelace document in the users collection.");
-});
+        GetData();
+      }); 
+      
+    }
+
+    private void GetData()
+    {
+      FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+      CollectionReference usersRef = db.Collection("users");
+      usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+      {
+
+          QuerySnapshot snapshot = task.Result;
+          foreach (DocumentSnapshot document in snapshot.Documents)
+          {
+              Debug.Log($"User: {document.Id}");
+              Dictionary<string, object> documentDictionary = document.ToDictionary();
+              Debug.Log($"First: {documentDictionary["First"]}");
+              if (documentDictionary.ContainsKey("Middle"))
+              {
+                Debug.Log($"Middle: {documentDictionary["Middle"]}");
+              }
+
+          Debug.Log($"Last: {documentDictionary["Last"]}");
+          Debug.Log($"Born: {documentDictionary["Born"]}");
+          }
+
+          Debug.Log("Read all data from the users collection.");
+      });
     }
 
     private void Login()  
