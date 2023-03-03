@@ -10,5 +10,5 @@ public class GameOver : MonoBehaviour
     public void PlayAgain()
     {
         SceneManager.LoadScene("Scene 1");
-    }
+    }    
 }

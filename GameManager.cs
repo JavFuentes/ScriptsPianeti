@@ -36,6 +36,13 @@ public class GameManager : MonoBehaviour
         {
             StartGame();          
         }
+
+        // Si se presiona el botón "RankingButton" y el juego no está en curso, se inicia el juego
+        if (Input.GetButtonDown("RankingButton") &&
+         currentGameState != GameState.inGame)
+        {
+            ShowRanking();
+        }
     }
 
     // Función que inicia el juego
@@ -54,6 +61,11 @@ public class GameManager : MonoBehaviour
     public void BackToMenu()
     {
         SetGameState(GameState.menu);
+    }
+
+    public void ShowRanking()
+    {
+        SceneManager.LoadScene("Ranking");      
     }
 
     // Función que cambia el estado del juego
