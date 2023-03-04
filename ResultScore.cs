@@ -20,7 +20,7 @@ public class ResultScore : MonoBehaviour
         int MaxScore = PlayerPrefs.GetInt("maxScore", 0);
 
         //Muestra el puntaje actual en el texto scoreText
-        scoreText.text = "Score : "+ Score();
+        scoreText.text = "Score : " + Score();
 
         //Muestra el puntaje máximo en el texto maxScore
         maxScore.text = "Max :" + MaxScore;

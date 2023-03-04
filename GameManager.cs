@@ -68,6 +68,11 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Ranking");      
     }
 
+    public void ShowPerfil()
+    {
+        SceneManager.LoadScene("Perfil");      
+    }
+
     // Función que cambia el estado del juego
     private void SetGameState(GameState newGameSate)
     {   
