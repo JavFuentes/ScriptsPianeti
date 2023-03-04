@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Perfil : MonoBehaviour
 {   
@@ -54,4 +55,10 @@ public class Perfil : MonoBehaviour
         solWallet = s;
         PlayerPrefs.SetString("solWallet", solWallet);
     }
+
+    // La función BackMenu carga la escena "Scene 1" cuando se activa el botón "BackMenu".    
+    public void BackMenu()
+    {
+        SceneManager.LoadScene("Scene 1");
+    }  
 }
