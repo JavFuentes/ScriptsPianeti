@@ -56,7 +56,7 @@ public class Perfil : MonoBehaviour
         PlayerPrefs.SetString("solWallet", solWallet);
     }
 
-    // La función BackMenu carga la escena "Scene 1" cuando se activa el botón "BackMenu".    
+    // Carga la escena "Scene 1" cuando se activa el botón "BackMenu".    
     public void BackMenu()
     {
         SceneManager.LoadScene("Scene 1");

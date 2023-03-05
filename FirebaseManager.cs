@@ -11,53 +11,63 @@ public class FirebaseManager : MonoBehaviour
     private FirebaseApp _app;  
     
     void Start()
-    {
+    {   
+       // Revisa y resuelve las dependencias necesarias para usar Firebase.
        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
           var dependencyStatus = task.Result;
           if (dependencyStatus == Firebase.DependencyStatus.Available) {
-            // Create and hold a reference to your FirebaseApp,
-            // where app is a Firebase.FirebaseApp property of your application class.
+             // Crea una instancia de FirebaseApp y la guarda en una propiedad.
               _app = Firebase.FirebaseApp.DefaultInstance;
               
-            // Set a flag here to indicate whether Firebase is ready to use by your app.
+            // Indica que Firebase está listo para ser usado por la aplicación.
             Login();
           } 
     
           else {
+            // Si no se pueden resolver las dependencias de Firebase, muestra un mensaje de error.
             UnityEngine.Debug.LogError(System.String.Format(
-            "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
-            // Firebase Unity SDK is not safe to use here.
+            "Could not resolve all Firebase dependencies: {0}", dependencyStatus));            
           }
         });
     } 
 
     private void AddData()
     {
+      // Crea una instancia de FirebaseFirestore y FirebaseAuth.
       FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
       Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
 
+      // Obtiene una referencia al documento del usuario actual.
       DocumentReference docRef = db.Collection("users").Document(auth.CurrentUser.UserId);
 
+      // Crea un diccionario con los datos del usuario.
       Dictionary<string, object> user = new Dictionary<string, object>
       {
         { "First", "Ada" },
         { "Last", "Lovelace" },
         { "Born", 1815 },
       };
+
+      // Agrega los datos del usuario al documento
       docRef.SetAsync(user).ContinueWithOnMainThread(task => {
-        Debug.Log("Added data to the alovelace document in the users collection.");
+        Debug.Log("Se agregaron datos al documento alovelace en la colección de usuarios..");
+
+        ///Esto no va aquí
         GetData();
       }); 
       
     }
 
     private void GetData()
-    {
+    { 
+      // Crea una instancia de FirebaseFirestore y obtiene una referencia a la colección "users".
       FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
       CollectionReference usersRef = db.Collection("users");
+
+      // Obtiene un snapshot de los documentos en la colección "users".
       usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
       {
-
+          // Itera sobre los documentos y muestra sus datos.
           QuerySnapshot snapshot = task.Result;
           foreach (DocumentSnapshot document in snapshot.Documents)
           {
@@ -73,34 +83,36 @@ public class FirebaseManager : MonoBehaviour
           Debug.Log($"Born: {documentDictionary["Born"]}");
           }
 
-          Debug.Log("Read all data from the users collection.");
+          Debug.Log("Leídos todos los datos de la colección de usuarios.");
       });
     }
 
     private void Login()  
     {
-      
+      // Crea una instancia de FirebaseAuth.
       Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
 
+      // Si ya hay un usuario autentificado, agrega los datos del usuario y sale de la función.
       if(auth.CurrentUser != null)
       {
           Debug.Log("Usuario ya está autentificado.");
           AddData();
           return;
       }
-      
+
+      // Inicia sesión de forma anónima y, cuando termine, agrega los datos del usuario.
       auth.SignInAnonymouslyAsync().ContinueWith(task => {
           if (task.IsCanceled) {
-            Debug.LogError("SignInAnonymouslyAsync was canceled.");
+            Debug.LogError("SignInAnonymouslyAsync fue canceledo.");
             return;
           }
           if (task.IsFaulted) {
-            Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
+            Debug.LogError("SignInAnonymouslyAsync encontró un error: " + task.Exception);
             return;
           }
 
           Firebase.Auth.FirebaseUser newUser = task.Result;
-          Debug.LogFormat("User signed in successfully: {0} ({1})",
+          Debug.LogFormat("Usuario asignado correctamente: {0} ({1})",
               newUser.DisplayName, newUser.UserId);
               AddData();
       });
