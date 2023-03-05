@@ -8,10 +8,19 @@ using Firebase.Extensions;
 
 public class FirebaseManager : MonoBehaviour
 {   
+  //  Variables traidas de la memoria persistente 
+    private string nick;
+    private string wallet;
+    private int score;
+
     private FirebaseApp _app;  
     
     void Start()
-    {   
+    {  
+      score = PlayerPrefs.GetInt("maxScore", 0);
+      nick = PlayerPrefs.GetString("nickName", "");
+      wallet = PlayerPrefs.GetString("solWallet", "");
+
        // Revisa y resuelve las dependencias necesarias para usar Firebase.
        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
           var dependencyStatus = task.Result;
@@ -26,7 +35,7 @@ public class FirebaseManager : MonoBehaviour
           else {
             // Si no se pueden resolver las dependencias de Firebase, muestra un mensaje de error.
             UnityEngine.Debug.LogError(System.String.Format(
-            "Could not resolve all Firebase dependencies: {0}", dependencyStatus));            
+            "No se pudieron resolver todas las dependencias de Firebase: {0}", dependencyStatus));            
           }
         });
     } 
@@ -43,9 +52,9 @@ public class FirebaseManager : MonoBehaviour
       // Crea un diccionario con los datos del usuario.
       Dictionary<string, object> user = new Dictionary<string, object>
       {
-        { "First", "Ada" },
-        { "Last", "Lovelace" },
-        { "Born", 1815 },
+        { "Nick", nick },
+        { "Wallet", wallet },
+        { "Score", score },
       };
 
       // Agrega los datos del usuario al documento
