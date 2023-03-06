@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 public class Ranking : MonoBehaviour
 {   
     //Textos del Top 10

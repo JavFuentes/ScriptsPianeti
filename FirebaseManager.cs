@@ -8,7 +8,7 @@ using Firebase.Extensions;
 
 public class FirebaseManager : MonoBehaviour
 {   
-  //  Variables traidas de la memoria persistente 
+    //  Variables traidas de la memoria persistente 
     private string nick;
     private string wallet;
     private int score;
