@@ -59,7 +59,7 @@ public class FirebaseManager : MonoBehaviour
 
       // Agrega los datos del usuario al documento
       docRef.SetAsync(user).ContinueWithOnMainThread(task => {
-        Debug.Log("Se agregaron datos al documento alovelace en la colección de usuarios..");
+        Debug.Log("Se agregaron datos al documento en la colección de usuarios..");
 
         ///Esto no va aquí
         GetData();
@@ -82,14 +82,14 @@ public class FirebaseManager : MonoBehaviour
           {
               Debug.Log($"User: {document.Id}");
               Dictionary<string, object> documentDictionary = document.ToDictionary();
-              Debug.Log($"First: {documentDictionary["First"]}");
-              if (documentDictionary.ContainsKey("Middle"))
+              Debug.Log($"Nick: {documentDictionary["Nick"]}");
+              if (documentDictionary.ContainsKey("Wallet"))
               {
-                Debug.Log($"Middle: {documentDictionary["Middle"]}");
+                Debug.Log($"Wallet: {documentDictionary["Wallet"]}");
               }
 
-          Debug.Log($"Last: {documentDictionary["Last"]}");
-          Debug.Log($"Born: {documentDictionary["Born"]}");
+          Debug.Log($"Wallet: {documentDictionary["Wallet"]}");
+          Debug.Log($"Score: {documentDictionary["Score"]}");
           }
 
           Debug.Log("Leídos todos los datos de la colección de usuarios.");

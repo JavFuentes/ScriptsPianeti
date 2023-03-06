@@ -97,6 +97,17 @@ public class GUIManager : MonoBehaviour
         if (resultScore > previousMaxScore)
         {
             PlayerPrefs.SetInt("maxScore", resultScore);
+
+            if(PlayerPrefs.GetInt("maxScore", 0) >= 250){
+                // Esperar hasta que el tablero termine de moverse.
+                yield return new WaitUntil(() => !BoardManager.sharedInstance.isShifting);
+
+                // Esperar un segundo y luego cargar la escena de Game Over.
+                yield return new WaitForSeconds(1f);    
+
+                SceneManager.LoadScene("Perfil");
+            }
+          
         }
 
         // Esperar hasta que el tablero termine de moverse.
