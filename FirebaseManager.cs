@@ -8,13 +8,16 @@ using Firebase.Extensions;
 
 public class FirebaseManager : MonoBehaviour
 {   
-    //  Variables traidas de la memoria persistente 
+    // Colección de usuarios
+    ArrayList users = new ArrayList();
+
+    // Variables traidas de la memoria persistente 
     private string nick;
     private string wallet;
     private int score;
 
     private FirebaseApp _app;  
-    
+        
     void Start()
     {  
       score = PlayerPrefs.GetInt("maxScore", 0);
@@ -54,7 +57,7 @@ public class FirebaseManager : MonoBehaviour
       {
         { "Nick", nick },
         { "Wallet", wallet },
-        { "Score", score },
+        { "Score", score }       
       };
 
       // Agrega los datos del usuario al documento
@@ -67,7 +70,7 @@ public class FirebaseManager : MonoBehaviour
       
     }
 
-    private void GetData()
+    private ArrayList GetData()
     { 
       // Crea una instancia de FirebaseFirestore y obtiene una referencia a la colección "users".
       FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
@@ -76,24 +79,27 @@ public class FirebaseManager : MonoBehaviour
       // Obtiene un snapshot de los documentos en la colección "users".
       usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
       {
-          // Itera sobre los documentos y muestra sus datos.
+          // Itera sobre los documentos y guarda sus datos en un objeto "User".
           QuerySnapshot snapshot = task.Result;
           foreach (DocumentSnapshot document in snapshot.Documents)
           {
-              Debug.Log($"User: {document.Id}");
-              Dictionary<string, object> documentDictionary = document.ToDictionary();
-              Debug.Log($"Nick: {documentDictionary["Nick"]}");
-              if (documentDictionary.ContainsKey("Wallet"))
-              {
-                Debug.Log($"Wallet: {documentDictionary["Wallet"]}");
-              }
+            User user = new User();
 
-          Debug.Log($"Wallet: {documentDictionary["Wallet"]}");
-          Debug.Log($"Score: {documentDictionary["Score"]}");
+            Dictionary<string, object> documentDictionary = document.ToDictionary();
+
+            user.Id = document.Id;
+            user.Nick = $"Nick: {documentDictionary["Nick"]}";      
+            user.Wallet = $"Wallet: {documentDictionary["Wallet"]}";
+            user.Score = int.Parse($"Score: {documentDictionary["Score"]}");
+            
+            users.Add(user);
           }
 
-          Debug.Log("Leídos todos los datos de la colección de usuarios.");
+          // Indica que se leyeron todos los datos y se guardaron en el ArrayList "users".
+          Debug.Log("Leídos todos los datos de la colección de users y almacenados en el ArrayList.");
       });
+
+      return users;
     }
 
     private void Login()  
@@ -127,3 +133,4 @@ public class FirebaseManager : MonoBehaviour
       });
     }
 }
+
