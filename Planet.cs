@@ -17,7 +17,7 @@ public class Planet : MonoBehaviour
     private bool isSelected = false;
 
     //Referencia al Collider2D del planeta
-    private Collider2D collider;
+    private new Collider2D collider;
 
     //Id del planeta
     public int id;

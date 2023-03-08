@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using Firebase.Firestore;
 using Firebase;
 using Firebase.Extensions;
+using System.Linq;
 
 
 public class FirebaseManager : MonoBehaviour
@@ -15,6 +17,12 @@ public class FirebaseManager : MonoBehaviour
   private string nick;
   private string wallet;
   private int score;
+
+  // Usuarios Top 10
+  User[] tops = new User[10];
+
+  // Textos de cada Top 10
+  public Text top1, top2, top3, top4, top5, top6, top7, top8, top9, top10;
 
   private FirebaseApp _app;  
 
@@ -85,33 +93,41 @@ public class FirebaseManager : MonoBehaviour
       
       foreach (DocumentSnapshot document in snapshot.Documents)
       {        
-        User user = new User();
-        
+        User user = new User();        
         Dictionary<string, object> documentDictionary = document.ToDictionary();
         
-        user.Id = document.Id;
-        Debug.Log($"User: {document.Id}");
-
-        user.Nick = $"Nick: {documentDictionary["Nick"]}";   
-        Debug.Log($"Nick: {documentDictionary["Nick"]}");   
-
-        user.Wallet = $"Wallet: {documentDictionary["Wallet"]}";
-        Debug.Log($"Wallet: {documentDictionary["Wallet"]}"); 
-        
+        user.Id = document.Id; 
+        user.Nick = $"{documentDictionary["Nick"]}";
+        user.Wallet = $"{documentDictionary["Wallet"]}";        
         user.Score = int.Parse(documentDictionary["Score"].ToString());
-        Debug.Log($"Score: {documentDictionary["Score"]}"); 
         
-        
+        Debug.Log($"Usuario {document.Id} almacenado correctamente.");        
         Users.Add(user);
       }
 
-      foreach(User usuario in Users)
+      // Indica que se leyeron todos los datos y se guardaron en el ArrayList "Users".
+      Debug.Log("Leídos todos los datos de la colección de users y almacenados en el ArrayList.");
+
+      // Ordenar la lista de usuarios por puntaje (de mayor a menor) y convertirla a una lista
+      List<User> sortedUsers = Users.Cast<User>().OrderByDescending(u => u.Score).ToList();
+
+      // Almacenar los 10 usuarios con los mejores puntajes en el array tops
+      for (int i = 0; i < 10 && i < sortedUsers.Count; i++)
       {
-       Debug.Log(usuario.Nick);
+        tops[i] = sortedUsers[i];
       }
 
-      // Indica que se leyeron todos los datos y se guardaron en el ArrayList "users".
-      Debug.Log("Leídos todos los datos de la colección de users y almacenados en el ArrayList.");
+      top1.text = tops[0].Nick + "  " + tops[0].Score;
+      top2.text = tops[1].Nick + "  " + tops[1].Score;
+      top3.text = tops[2].Nick + "  " + tops[2].Score;
+      top4.text = tops[3].Nick + "  " + tops[3].Score;
+      top5.text = tops[4].Nick + "  " + tops[4].Score;
+      top6.text = tops[5].Nick + "  " + tops[5].Score;
+      top7.text = tops[6].Nick + "  " + tops[6].Score;
+      top8.text = tops[7].Nick + "  " + tops[7].Score;
+      top9.text = tops[8].Nick + "  " + tops[8].Score;
+      top10.text = tops[9].Nick + "  " + tops[9].Score;
+      
     });    
   }
 
