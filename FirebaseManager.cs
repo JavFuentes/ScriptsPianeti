@@ -8,129 +8,146 @@ using Firebase.Extensions;
 
 public class FirebaseManager : MonoBehaviour
 {   
-    // Colección de usuarios
-    ArrayList users = new ArrayList();
-
-    // Variables traidas de la memoria persistente 
-    private string nick;
-    private string wallet;
-    private int score;
-
-    private FirebaseApp _app;  
-        
-    void Start()
-    {  
-      score = PlayerPrefs.GetInt("maxScore", 0);
-      nick = PlayerPrefs.GetString("nickName", "");
-      wallet = PlayerPrefs.GetString("solWallet", "");
-
-       // Revisa y resuelve las dependencias necesarias para usar Firebase.
-       Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
-          var dependencyStatus = task.Result;
-          if (dependencyStatus == Firebase.DependencyStatus.Available) {
-             // Crea una instancia de FirebaseApp y la guarda en una propiedad.
-              _app = Firebase.FirebaseApp.DefaultInstance;
-              
-            // Indica que Firebase está listo para ser usado por la aplicación.
-            Login();
-          } 
+  // Colección de usuarios
+  private ArrayList Users = new ArrayList();
     
-          else {
-            // Si no se pueden resolver las dependencias de Firebase, muestra un mensaje de error.
-            UnityEngine.Debug.LogError(System.String.Format(
-            "No se pudieron resolver todas las dependencias de Firebase: {0}", dependencyStatus));            
-          }
-        });
-    } 
+  // Variables traidas de la memoria persistente 
+  private string nick;
+  private string wallet;
+  private int score;
 
-    private void AddData()
-    {
-      // Crea una instancia de FirebaseFirestore y FirebaseAuth.
-      FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-      Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+  private FirebaseApp _app;  
 
-      // Obtiene una referencia al documento del usuario actual.
-      DocumentReference docRef = db.Collection("users").Document(auth.CurrentUser.UserId);
+  void Start()
+  {  
+    score = PlayerPrefs.GetInt("maxScore", 0);
+    nick = PlayerPrefs.GetString("nickName", "");
+    wallet = PlayerPrefs.GetString("solWallet", "");
 
-      // Crea un diccionario con los datos del usuario.
-      Dictionary<string, object> user = new Dictionary<string, object>
+    // Revisa y resuelve las dependencias necesarias para usar Firebase.
+    Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      var dependencyStatus = task.Result;
+      if (dependencyStatus == Firebase.DependencyStatus.Available) 
       {
-        { "Nick", nick },
-        { "Wallet", wallet },
-        { "Score", score }       
-      };
+        // Crea una instancia de FirebaseApp y la guarda en una propiedad.
+        _app = Firebase.FirebaseApp.DefaultInstance;
+              
+        // Indica que Firebase está listo para ser usado por la aplicación.
+        Login();
+      } 
+    
+      else 
+      {
+        // Si no se pueden resolver las dependencias de Firebase, muestra un mensaje de error.
+        UnityEngine.Debug.LogError(System.String.Format(
+        "No se pudieron resolver todas las dependencias de Firebase: {0}", dependencyStatus));            
+      }
+    });       
+  } 
 
-      // Agrega los datos del usuario al documento
-      docRef.SetAsync(user).ContinueWithOnMainThread(task => {
-        Debug.Log("Se agregaron datos al documento en la colección de usuarios..");
+  private void AddData()
+  {
+    // Crea una instancia de FirebaseFirestore y FirebaseAuth.
+    FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+    Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
 
-        ///Esto no va aquí
-        GetData();
-      }); 
+    // Obtiene una referencia al documento del usuario actual.
+    DocumentReference docRef = db.Collection("users").Document(auth.CurrentUser.UserId);
+
+    // Crea un diccionario con los datos del usuario.
+    Dictionary<string, object> user = new Dictionary<string, object>
+    {
+      { "Nick", nick },
+      { "Wallet", wallet },
+      { "Score", score }       
+    };
+
+    // Agrega los datos del usuario al documento
+    docRef.SetAsync(user).ContinueWithOnMainThread(task => {
+    Debug.Log("Se agregaron datos al documento en la colección de usuarios..");
+
+    //Se obtienen los datos de Firestore y se guardan en un ArrayList
+    GetData();
+    });       
+  }
+
+  private void GetData()
+  { 
+    // Crea una instancia de FirebaseFirestore y obtiene una referencia a la colección "users".
+    FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+    CollectionReference usersRef = db.Collection("users");
+
+    // Obtiene un snapshot de los documentos en la colección "users".
+    usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+    {
+      // Itera sobre los documentos y guarda sus datos en un objeto "User".
+      QuerySnapshot snapshot = task.Result;
       
-    }
+      foreach (DocumentSnapshot document in snapshot.Documents)
+      {        
+        User user = new User();
+        
+        Dictionary<string, object> documentDictionary = document.ToDictionary();
+        
+        user.Id = document.Id;
+        Debug.Log($"User: {document.Id}");
 
-    private ArrayList GetData()
-    { 
-      // Crea una instancia de FirebaseFirestore y obtiene una referencia a la colección "users".
-      FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-      CollectionReference usersRef = db.Collection("users");
+        user.Nick = $"Nick: {documentDictionary["Nick"]}";   
+        Debug.Log($"Nick: {documentDictionary["Nick"]}");   
 
-      // Obtiene un snapshot de los documentos en la colección "users".
-      usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
-      {
-          // Itera sobre los documentos y guarda sus datos en un objeto "User".
-          QuerySnapshot snapshot = task.Result;
-          foreach (DocumentSnapshot document in snapshot.Documents)
-          {
-            User user = new User();
-
-            Dictionary<string, object> documentDictionary = document.ToDictionary();
-
-            user.Id = document.Id;
-            user.Nick = $"Nick: {documentDictionary["Nick"]}";      
-            user.Wallet = $"Wallet: {documentDictionary["Wallet"]}";
-            user.Score = int.Parse($"Score: {documentDictionary["Score"]}");
-            
-            users.Add(user);
-          }
-
-          // Indica que se leyeron todos los datos y se guardaron en el ArrayList "users".
-          Debug.Log("Leídos todos los datos de la colección de users y almacenados en el ArrayList.");
-      });
-
-      return users;
-    }
-
-    private void Login()  
-    {
-      // Crea una instancia de FirebaseAuth.
-      Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-
-      // Si ya hay un usuario autentificado, agrega los datos del usuario y sale de la función.
-      if(auth.CurrentUser != null)
-      {
-          Debug.Log("Usuario ya está autentificado.");
-          AddData();
-          return;
+        user.Wallet = $"Wallet: {documentDictionary["Wallet"]}";
+        Debug.Log($"Wallet: {documentDictionary["Wallet"]}"); 
+        
+        user.Score = int.Parse(documentDictionary["Score"].ToString());
+        Debug.Log($"Score: {documentDictionary["Score"]}"); 
+        
+        
+        Users.Add(user);
       }
 
-      // Inicia sesión de forma anónima y, cuando termine, agrega los datos del usuario.
-      auth.SignInAnonymouslyAsync().ContinueWith(task => {
-          if (task.IsCanceled) {
-            Debug.LogError("SignInAnonymouslyAsync fue canceledo.");
-            return;
-          }
-          if (task.IsFaulted) {
-            Debug.LogError("SignInAnonymouslyAsync encontró un error: " + task.Exception);
-            return;
-          }
+      foreach(User usuario in Users)
+      {
+       Debug.Log(usuario.Nick);
+      }
 
-          Firebase.Auth.FirebaseUser newUser = task.Result;
-          Debug.LogFormat("Usuario asignado correctamente: {0} ({1})",
-              newUser.DisplayName, newUser.UserId);
-              AddData();
-      });
+      // Indica que se leyeron todos los datos y se guardaron en el ArrayList "users".
+      Debug.Log("Leídos todos los datos de la colección de users y almacenados en el ArrayList.");
+    });    
+  }
+
+  private void Login()  
+  {
+    // Crea una instancia de FirebaseAuth.
+    Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+
+    // Si ya hay un usuario autentificado, agrega los datos del usuario y sale de la función.
+    if(auth.CurrentUser != null)
+    {
+        Debug.Log("Usuario ya está autentificado.");
+        AddData();
+        return;
     }
+
+    // Inicia sesión de forma anónima y, cuando termine, agrega los datos del usuario.
+    auth.SignInAnonymouslyAsync().ContinueWith(task => {
+      if (task.IsCanceled) 
+      {
+        Debug.LogError("SignInAnonymouslyAsync fue canceledo.");
+        return;
+      }
+
+      if (task.IsFaulted) 
+      {
+        Debug.LogError("SignInAnonymouslyAsync encontró un error: " + task.Exception);
+        return;
+      }
+
+      Firebase.Auth.FirebaseUser newUser = task.Result;
+      Debug.LogFormat("Usuario asignado correctamente: {0} ({1})",
+        newUser.DisplayName, newUser.UserId);
+
+      AddData();
+    });
+  }    
 }
 

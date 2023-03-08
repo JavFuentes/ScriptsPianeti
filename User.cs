@@ -19,8 +19,7 @@ public class User
         Id = id;
         Nick = nick;
         Wallet = wallet;
-        Score = score;
-        
+        Score = score;        
     }
 }
 
