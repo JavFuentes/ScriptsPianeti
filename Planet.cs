@@ -254,8 +254,7 @@ public class Planet : MonoBehaviour
         if (hMatch || vMatch)
         {
             spriteRenderer.sprite = null;
-            //BoardManager.sharedInstance.FindNullPlanets();
-
+            
             StopCoroutine(BoardManager.sharedInstance.FindNullPlanets());
             StartCoroutine(BoardManager.sharedInstance.FindNullPlanets());
         }        

@@ -9,6 +9,8 @@ public class BoardManager : MonoBehaviour
     // Lista de Sprites para los planetas
     public List<Sprite> prefabs = new List<Sprite>();
 
+    public List<int> prefabWeights;
+
     // Planeta actual y tamaño del tablero
     public GameObject currentPlanet;
     public int xSize, ySize;       
@@ -74,6 +76,10 @@ public class BoardManager : MonoBehaviour
                 do
                 {
                     idx = Random.Range(0, prefabs.Count);
+                    if(idx > 3)
+                    {
+                        idx = Random.Range(0, prefabs.Count);
+                    }
                 }
                 while ((x > 0 && idx == planets[x - 1, y].GetComponent<Planet>().id) ||
                     (y > 0 && idx == planets[x, y - 1].GetComponent<Planet>().id));
