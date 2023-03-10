@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class Perfil : MonoBehaviour
+public class Profile : MonoBehaviour
 {   
     //Variables que almacenarán el texto ingresado en los input fields
     private string nickName;

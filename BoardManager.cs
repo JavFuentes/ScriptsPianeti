@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public static BoardManager sharedInstance;  // Singleton
+    // Singleton
+    public static BoardManager sharedInstance;  
 
     // Lista de Sprites para los planetas
-    public List<Sprite> prefabs = new List<Sprite>();
-
-    public List<int> prefabWeights;
+    public List<Sprite> prefabs = new List<Sprite>();    
 
     // Planeta actual y tamaño del tablero
     public GameObject currentPlanet;
@@ -34,7 +33,7 @@ public class BoardManager : MonoBehaviour
         // Configuración para que la pantalla nunca se apague
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        //  El famoso singleton
+        //  El famoso Singleton
         if (sharedInstance == null)
         {
             sharedInstance = this;
@@ -46,6 +45,7 @@ public class BoardManager : MonoBehaviour
             // Crear el tablero inicial
             Vector2 offset = currentPlanet.GetComponent<BoxCollider2D>().size;
             CreateInicialBoard(offset);  
+
             // Obtener el componente AudioSource para reproducir efectos de sonido            
             AudioBoardManager = GetComponent<AudioSource>();            
     }
@@ -129,26 +129,35 @@ public class BoardManager : MonoBehaviour
      }
 
     private IEnumerator MakePlanetsFall(int x, int yStart, float shiftDelay = 0.05f)
-    {
+    {   
+        // Se establece la bandera booleana en verdadero para indicar que la función está en ejecución.
         isShifting = true;
 
+        // Se crea una lista para almacenar los componentes SpriteRenderer de los planetas en la columna especificada.
         List<SpriteRenderer> renderers = new List<SpriteRenderer>();
+
+        // Se inicializa el contador de planetas nulos en cero.
         int nullPlanets = 0;
       
+        // Se recorren los planetas en la columna especificada. 
         for (int y = yStart; y < ySize; y++)
-        {
+        {   
+            // Se obtiene el componente SpriteRenderer del planeta actual.
             SpriteRenderer spriteRenderer = planets[x, y].GetComponent<SpriteRenderer>();
-            
+
+            // Si el sprite del planeta actual es nulo, se incrementa el contador de planetas nulos. 
             if (spriteRenderer.sprite == null)
             {
                 nullPlanets++;
             }
+
+            // Se agrega el componente SpriteRenderer del planeta actual a la lista de renderers.
             renderers.Add(spriteRenderer);
         }
 
        for (int i = 0; i < nullPlanets; i++)
        {
-            GUIManager.sharedInstance.Score += 10;
+            //GUIManager.sharedInstance.Score += 10;
 
             yield return new WaitForSeconds(shiftDelay);
 
@@ -166,25 +175,32 @@ public class BoardManager : MonoBehaviour
         }
 
     private Sprite GetNewPlanet(int x, int y)
-    {
+    {   
+        // Se crea una lista para almacenar los posibles planetas que pueden aparecer en la posición (x, y)    
         List<Sprite> possiblePlanets = new List<Sprite>();
+
+        // Se agregan todos los prefabs de los planetas a la lista de posibles planetas.
         possiblePlanets.AddRange(prefabs);
 
+        // Si hay un planeta a la izquierda, se remueve de la lista de posibles planetas.
         if (x > 0)
         {
             possiblePlanets.Remove(planets[x - 1, y].GetComponent<SpriteRenderer>().sprite);
         }
 
+        // Si hay un planeta a la derecha, se remueve de la lista de posibles planetas.
         if (x < xSize - 1)
         {
             possiblePlanets.Remove(planets[x + 1, y].GetComponent<SpriteRenderer>().sprite);
         }
 
+        // Si hay un planeta arriba, se remueve de la lista de posibles planetas.
         if (y > 0)
         {
             possiblePlanets.Remove(planets[x, y-1].GetComponent<SpriteRenderer>().sprite);
         }
 
+        // Se devuelve un planeta aleatorio de la lista de posibles planetas restantes.
         return possiblePlanets[Random.Range(0, possiblePlanets.Count)];
     }
 }

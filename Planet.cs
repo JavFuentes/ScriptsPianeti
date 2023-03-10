@@ -133,7 +133,7 @@ public class Planet : MonoBehaviour
         if (spriteRenderer.sprite == newPlanet.GetComponent<SpriteRenderer>().sprite)
         {   
             // Si son iguales, no hace nada
-            return  ;
+            return;
         }
 
         // Intercambia las imágenes de los planetas y sus IDs
@@ -207,19 +207,25 @@ public class Planet : MonoBehaviour
         }
 
         if (matchingPlanets.Count >= BoardManager.MinPlanetsToMatch)
-        {     
-            //Si se hacen 4 en linea obtienes 1 movimiento y 10 puntos extra       
+        {   
+            //Si se hacen 3 en linea 
+            if(matchingPlanets.Count == 2)
+            {
+                GUIManager.sharedInstance.Score += 10;          
+            }
+
+            //Si se hacen 4 en linea obtienes 1 movimiento      
             if(matchingPlanets.Count == 3)
             {
                 GUIManager.sharedInstance.MoveCounter += 1; 
                 GUIManager.sharedInstance.Score += 10;  
             }
 
-            //Si se hacen 5 en linea ganas 3 movimientos y 50 puntos extra
+            //Si se hacen 5 en linea ganas 3 movimientos
             else if(matchingPlanets.Count == 4)
             {
-                GUIManager.sharedInstance.MoveCounter += 3; 
-                GUIManager.sharedInstance.Score += 50;   
+                GUIManager.sharedInstance.MoveCounter += 3;
+                GUIManager.sharedInstance.Score += 50;                   
             }
 
             // Elimina las imágenes de los planetas que coinciden
