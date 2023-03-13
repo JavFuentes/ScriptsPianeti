@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class Profile : MonoBehaviour
 {   
+    //Panel de Inputs
+    public GameObject panel;
+
     //Variables que almacenarán el texto ingresado en los input fields
     private string nickName;
     private string solWallet;
@@ -28,7 +31,15 @@ public class Profile : MonoBehaviour
         int MaxScore = PlayerPrefs.GetInt("maxScore", 0);
 
         //Muestra el puntaje máximo en el texto maxScore
-        maxScore.text = "My Score : " + MaxScore;        
+        maxScore.text = "" + MaxScore;     
+
+        if(nick.text == "" && wallet.text == ""){
+            panel.SetActive(true);
+        }   
+        else
+        {
+            panel.SetActive(false);
+        }
     }
 
     void Update()
@@ -61,4 +72,16 @@ public class Profile : MonoBehaviour
     {
         SceneManager.LoadScene("Scene 1");
     }  
+
+    public void SetProfile()
+    {
+        if(panel.activeSelf)
+        {
+            panel.SetActive(false);
+        }
+        else
+        {
+            panel.SetActive(true);
+        }
+    }
 }

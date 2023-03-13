@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
 
     public void ShowPerfil()
     {
-        SceneManager.LoadScene("Perfil");      
+        SceneManager.LoadScene("Profile");      
     }
 
     // Función que cambia el estado del juego
